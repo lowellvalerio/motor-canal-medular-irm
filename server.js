@@ -80,31 +80,44 @@ function canalBase(canal="NORMAL", severidad=""){
   };
 }
 
-function topografiaTarlov(loc){
-  if(!loc) return "en topografía sacra";
-  if(loc.includes("S")) return "en topografía sacra";
-  if(loc.includes("L")) return "a nivel lumbar";
-  if(loc.includes("D")) return "a nivel dorsolumbar";
-  return "en el canal raquídeo";
-}
+function topografiaTarlov(h){
+  const inicio = h.nivelInicio || '';
+  const fin = h.nivelFinal || '';
 
+  const texto = `${inicio} ${fin}`;
+
+  const tieneD = texto.includes('D');
+  const tieneL = texto.includes('L');
+  const tieneS = texto.includes('S');
+
+  if(tieneL && tieneS) return 'en topografía lumbosacra';
+  if(tieneS) return 'en topografía sacra';
+  if(tieneL) return 'a nivel lumbar';
+  if(tieneD) return 'a nivel dorsolumbar';
+
+  return 'en el canal raquídeo';
+}
 function generarTarlov(h){
   const loc = nivelTxt(h.niveles || h.localizacion, h);
-  const fraseLoc = loc ? (loc.startsWith("desde ") ? loc : "a nivel de " + loc) : "";
-  const topo = topografiaTarlov(loc);
+  const fraseLoc = loc
+  ? (loc.startsWith("desde ")
+      ? loc
+      : loc)
+  : "";
+  const topo = topografiaTarlov(h);
   const multi = h.tipo==="TARLOV_MULTIPLE" || plural(h.niveles);
   const lado = h.lateralidad ? ` de predominio ${h.lateralidad.toLowerCase()}` : "";
   const med = medidasTxt(h.medidas);
 
   if(multi){
     return {
-      descripcion: limpiar(`Se identifican quistes perineurales o de Tarlov en topografía sacra ${fraseLoc}${lado}, hiperintensos en T2 e hipointensos en T1, de bordes bien definidos${med}.`),
+      descripcion: limpiar(`Se identifican quistes perineurales o de Tarlov ${topo} ${fraseLoc}${lado}, hiperintensos en T2 e hipointensos en T1, de bordes bien definidos${med}.`),
       diagnostico: limpiar(`Quistes perineurales o de Tarlov ${fraseLoc}.`)
     };
   }
 
   return {
-    descripcion: limpiar(`Se identifica quiste perineural o de Tarlov en topografía sacra ${fraseLoc}${lado}, hiperintenso en T2 e hipointenso en T1, de bordes bien definidos${med}.`),
+    descripcion: limpiar(`Se identifica quiste perineural o de Tarlov ${topo} ${fraseLoc}${lado}, hiperintenso en T2 e hipointenso en T1, de bordes bien definidos${med}.`),
     diagnostico: limpiar(`Quiste perineural o de Tarlov ${fraseLoc}.`)
   };
 }
