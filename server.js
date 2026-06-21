@@ -97,28 +97,64 @@ function topografiaTarlov(h){
 
   return 'en el canal raquídeo';
 }
+
+function elegir(lista){
+  return lista[Math.floor(Math.random()*lista.length)];
+}
+
+function textoLocTarlov(h){
+  const loc = nivelTxt(h.niveles || h.localizacion, h);
+  if(!loc) return "";
+
+  if(loc.startsWith("desde ")) return loc;
+
+  return `en ${loc}`;
+}
+
 function generarTarlov(h){
   const loc = nivelTxt(h.niveles || h.localizacion, h);
-  const fraseLoc = loc
-  ? (loc.startsWith("desde ")
-      ? loc
-      : loc)
-  : "";
+  const fraseLoc = textoLocTarlov(h);
   const topo = topografiaTarlov(h);
   const multi = h.tipo==="TARLOV_MULTIPLE" || plural(h.niveles);
   const lado = h.lateralidad ? ` de predominio ${h.lateralidad.toLowerCase()}` : "";
   const med = medidasTxt(h.medidas);
 
   if(multi){
+    const descripciones = [
+      `Se identifican quistes perineurales o de Tarlov ${topo} ${fraseLoc}${lado}, hiperintensos en T2 e hipointensos en T1, de bordes bien definidos${med}.`,
+      `Se observan formaciones quísticas perineurales compatibles con quistes de Tarlov ${topo} ${fraseLoc}${lado}, de señal líquida, hiperintensas en T2 e hipointensas en T1${med}.`,
+      `Apreciándose quistes perineurales de características compatibles con quistes de Tarlov ${topo} ${fraseLoc}${lado}, sin signos compresivos evidentes${med}.`,
+      `Se reconocen imágenes quísticas perineurales ${topo} ${fraseLoc}${lado}, de bordes definidos y señal similar al líquido cefalorraquídeo, compatibles con quistes de Tarlov${med}.`
+    ];
+
+    const diagnosticos = [
+      `Quistes perineurales o de Tarlov ${fraseLoc}.`,
+      `Quistes de Tarlov ${fraseLoc}.`,
+      `Quistes perineurales ${fraseLoc}.`
+    ];
+
     return {
-      descripcion: limpiar(`Se identifican quistes perineurales o de Tarlov ${topo} ${fraseLoc}${lado}, hiperintensos en T2 e hipointensos en T1, de bordes bien definidos${med}.`),
-      diagnostico: limpiar(`Quistes perineurales o de Tarlov ${fraseLoc}.`)
+      descripcion: limpiar(elegir(descripciones)),
+      diagnostico: limpiar(elegir(diagnosticos))
     };
   }
 
+  const descripciones = [
+    `Se identifica quiste perineural o de Tarlov ${topo} ${fraseLoc}${lado}, hiperintenso en T2 e hipointenso en T1, de bordes bien definidos${med}.`,
+    `Se observa formación quística perineural compatible con quiste de Tarlov ${topo} ${fraseLoc}${lado}, de señal líquida, hiperintensa en T2 e hipointensa en T1${med}.`,
+    `Apreciándose quiste perineural de características compatibles con quiste de Tarlov ${topo} ${fraseLoc}${lado}, sin signos compresivos evidentes${med}.`,
+    `Se reconoce imagen quística perineural ${topo} ${fraseLoc}${lado}, de bordes definidos y señal similar al líquido cefalorraquídeo, compatible con quiste de Tarlov${med}.`
+  ];
+
+  const diagnosticos = [
+    `Quiste perineural o de Tarlov ${fraseLoc}.`,
+    `Quiste de Tarlov ${fraseLoc}.`,
+    `Quiste perineural ${fraseLoc}.`
+  ];
+
   return {
-    descripcion: limpiar(`Se identifica quiste perineural o de Tarlov ${topo} ${fraseLoc}${lado}, hiperintenso en T2 e hipointenso en T1, de bordes bien definidos${med}.`),
-    diagnostico: limpiar(`Quiste perineural o de Tarlov ${fraseLoc}.`)
+    descripcion: limpiar(elegir(descripciones)),
+    diagnostico: limpiar(elegir(diagnosticos))
   };
 }
 
