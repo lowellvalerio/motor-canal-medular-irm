@@ -40,7 +40,14 @@ function unir(lista){
 
 function plural(lista){ return (lista||[]).length > 1; }
 
-function nivelTxt(niveles){
+function nivelTxt(niveles, h={}){
+  if(h.nivelInicio && h.nivelFinal){
+    if(h.nivelInicio === h.nivelFinal) return h.nivelInicio;
+    return `desde ${h.nivelInicio} hasta ${h.nivelFinal}`;
+  }
+
+  if(h.nivelInicio) return h.nivelInicio;
+
   const l=(Array.isArray(niveles)?niveles:[niveles]).filter(Boolean);
   if(!l.length) return "";
   return unir(l);
@@ -74,7 +81,7 @@ function canalBase(canal="NORMAL", severidad=""){
 }
 
 function generarTarlov(h){
-  const loc = nivelTxt(h.niveles || h.localizacion);
+  const loc = nivelTxt(h.niveles || h.localizacion, h);
   const multi = h.tipo==="TARLOV_MULTIPLE" || plural(h.niveles);
   const lado = h.lateralidad ? ` de predominio ${h.lateralidad.toLowerCase()}` : "";
   const med = medidasTxt(h.medidas);
